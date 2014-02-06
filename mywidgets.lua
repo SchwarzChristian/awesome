@@ -59,23 +59,23 @@ function batteryUpdate()
    local p = io.popen(incpath .. "battery.ruby")
    local value = tonumber(p:read())
    local time = p:read()
-   local img = image.argb32(40, 20, nil)
+   local img = image.argb32(40, 18, nil)
 
    if (value > 1) then value = 1
    elseif (value < 0) then value = 0 
    end
    if (p:read()) then
-      c = "#AFAF00"
+      c = "#FFFF00"
    else
-      c = "#00AF00"
+      c = "#00FF00"
    end
-   img:draw_rectangle(0, 0, 40, 16, true, "#000000") --clear
-   img:draw_rectangle(0, 0, 40, 16, true, "#7F0000") --bg
-   img:draw_rectangle(0, 0, 40 * value, 16, true, c) --fg
+   img:draw_rectangle(0, 14, 40, 4, true, "#000000") --clear
+   img:draw_rectangle(0, 14, 40, 4, true, "#7F0000") --bg
+   img:draw_rectangle(0, 14, 40 * value, 4, true, c) --fg
    myBatteryWidget.bg_image = img
    return {t = " " .. time, p = value * 100}
 end
 
-wicked.register(myBatteryWidget, batteryUpdate, "<span color='#00FFFF'>$t</span>", 60)
+wicked.register(myBatteryWidget, batteryUpdate, "<span color='#00AFFF'>$t</span>", 60)
 -- end battery
 
