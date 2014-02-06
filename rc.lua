@@ -6,11 +6,11 @@ require("awful.rules")
 require("beautiful")
 -- Notification library
 require("naughty")
-
+require("wicked")
 -- Load Debian menu entries
 require("debian.menu")
 
-vicious = require("vicious")
+incpath = os.getenv("HOME") .. "/.config/awesome/"
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, and wallpapers
@@ -18,7 +18,7 @@ beautiful.init("/usr/share/awesome/themes/default/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
 terminal = "xterm"
-editor = os.getenv("EDITOR") or "editor"
+editor = "emacs -nw"
 editor_cmd = terminal .. " -e " .. editor
 
 -- Default modkey.
@@ -77,6 +77,9 @@ mylauncher = awful.widget.launcher({ image = image(beautiful.awesome_icon),
 -- {{{ Wibox
 -- Create a textclock widget
 mytextclock = awful.widget.textclock({ align = "right" })
+
+_, res = pcall(function() dofile(incpath .. "mywidgets.lua") end)
+if (res) then naughty.notify({title = "rc.lua", text = res, timeout = 10}) end
 
 -- Create a systray
 mysystray = widget({ type = "systray" })
@@ -151,9 +154,11 @@ for s = 1, screen.count() do
         },
         mylayoutbox[s],
         mytextclock,
-	netwidget,
         s == 1 and mysystray or nil,
-        mytasklist[s],
+	cpugraphwidget,
+	myBatteryWidget,
+	myNetWidget,
+	mytasklist[s],
         layout = awful.widget.layout.horizontal.rightleft
     }
 end
