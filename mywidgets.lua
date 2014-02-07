@@ -57,13 +57,16 @@ function netUpdate()
       return netUpdate()
    end
 
-   if (netData.last.maxtx == 0 and netData.last.maxrx == 0) then return {iface = "<span strikethrough='true'>" .. netData:getiface() .. "</span>"} end
+   if (netData.last.maxtx == 0 and netData.last.maxrx == 0) then 
+      netData.data = {}
+      return {iface = "<span strikethrough='true'>" .. netData:getiface() .. "</span>"} 
+   end
 
    if (#netData.data > 50) then
-      for i = 1, 56 do
+      for i = 1, 50 do
 	 netData.data[i] = netData.data[i+1]
       end
-      for i = 57, #netData.data do
+      for i = 51, #netData.data do
 	 netData.data[i] = nil
       end
    end
