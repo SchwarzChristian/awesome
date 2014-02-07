@@ -86,6 +86,7 @@ mysystray = widget({ type = "systray" })
 
 -- Create a wibox for each screen and add it
 mywibox = {}
+mymonbox = {}
 mypromptbox = {}
 mylayoutbox = {}
 mytaglist = {}
@@ -146,20 +147,26 @@ for s = 1, screen.count() do
     mywibox[s] = awful.wibox({ position = "top", screen = s })
     -- Add widgets to the wibox - order matters
     mywibox[s].widgets = {
-        {
-            mylauncher,
-            mytaglist[s],
-            mypromptbox[s],
-            layout = awful.widget.layout.horizontal.leftright
-        },
-        mylayoutbox[s],
-        mytextclock,
-        s == 1 and mysystray or nil,
-	cpugraphwidget,
-	myNetWidget,
-	myBatteryWidget,
-	mytasklist[s],
-        layout = awful.widget.layout.horizontal.rightleft
+       {
+	  mylauncher,
+	  mytaglist[s],
+	  mypromptbox[s],
+	  layout = awful.widget.layout.horizontal.leftright
+       },
+       mylayoutbox[s],
+       mytextclock,
+       s == 1 and mysystray or nil,
+       mytasklist[s],
+       layout = awful.widget.layout.horizontal.rightleft
+    }
+    mymonbox[s] = awful.wibox({position = "bottom", screen = s})
+--    mymonbox:set_bg("#000000")
+    mymonbox[s].widgets = {
+       { background_color = "#000000" },
+       cpugraphwidget,
+       myBatteryWidget,
+       myNetWidget,
+       layout = awful.widget.layout.horizontal.leftright
     }
 end
 -- }}}

@@ -23,13 +23,15 @@ function netData:getiface()
    return self.ifaces[self.iface]
 end
 
-local img = image.argb32(100, 18, nil)
+local img = image.argb32(150, 18, nil)
 myNetWidget.bg_image = img
+local cycle = 0
 
 function netUpdate()
-   img:draw_rectangle(0, 0, 100, 18, true, "#004000") --clear
-   img:draw_rectangle(40, 1, 58, 8, true, "#006F00") --bg
-   img:draw_rectangle(40, 10, 58, 8, true, "#006F00") --bg
+   img:draw_rectangle(0, 0, 150, 18, true, "#004000") --clear
+   img:draw_rectangle(42, 1, 52, 16, true, "#006F00") --bg
+   img:draw_rectangle(97, 1, 52, 16, true, "#006F00") --bg
+   cycle = cycle + 1
    
    local p = io.popen(incpath .. "net.ruby " .. netData:getiface())
    local iface = p:read()
@@ -55,9 +57,9 @@ function netUpdate()
       return netUpdate()
    end
 
-   if (netData.last.maxtx == 0 or netData.last.maxrx == 0) then return {iface = "<span strikethrough='true'>" .. netData:getiface() .. "</span>"} end
+   if (netData.last.maxtx == 0 and netData.last.maxrx == 0) then return {iface = "<span strikethrough='true'>" .. netData:getiface() .. "</span>"} end
 
-   if (#netData.data > 56) then
+   if (#netData.data > 50) then
       for i = 1, 56 do
 	 netData.data[i] = netData.data[i+1]
       end
@@ -68,10 +70,21 @@ function netUpdate()
 
    data = netData.data
 
+   if (cycle > 0) then
+      local t, r = 0, 0
+      for _, d in pairs(data) do
+	 t = math.max(t, d.tx)
+	 r = math.max(r, d.rx)
+      end
+      netData.last.maxtx, netData.last.maxrx = t, r
+      cycle = 0
+   end
+   
+   offset = 50 - #data
    for i = 1, #data do
-      v1, v2 = 17 - data[i].tx / netData.last.maxtx * 7, 8 - data[i].rx / netData.last.maxrx * 7
-      img:draw_line(41 + i, 8, 41 + i, v2, "#FF0000")
-      img:draw_line(41 + i, v1, 41 + i, 17, "#00FF00")
+      vt, vr = 15 - data[i].tx / netData.last.maxtx * 13, 15 - data[i].rx / netData.last.maxrx * 13
+      if (data[i].tx > 0) then img:draw_line(43 + i + offset, vt, 43 + i + offset, 15, "#FF0000") end
+      if (data[i].rx > 0) then img:draw_line(97 + i + offset, vr, 97 + i + offset, 15, "#00FF00") end
    end
 
    return {iface = netData:getiface()}
